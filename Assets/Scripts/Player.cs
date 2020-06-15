@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
     public float speed;
     float flySpeed;
     Rigidbody2D rb;
+    private int speedCoins = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,11 +26,21 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, Input.GetAxis("Vertical") * speed);
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * (speed + speedCoins * 0.2f), 
+                                  Input.GetAxis("Vertical") * (speed + speedCoins * 0.2f));
     }
 
     public void IncreaseSpeed(float inc)
     {
         flySpeed = inc; 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "SpeedCoin")
+        {
+            speedCoins++;
+            collision.gameObject.SetActive(false);
+        }
     }
 }

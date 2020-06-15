@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using Random = System.Random;
 
 public class MainCamera : MonoBehaviour
@@ -17,6 +18,9 @@ public class MainCamera : MonoBehaviour
     public GameObject fence;
     private List<GameObject>[] fences;
 
+    public GameObject speedCoin;
+    private List<GameObject>[] speedCoins;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,9 +28,11 @@ public class MainCamera : MonoBehaviour
         player.GetComponent<Player>().IncreaseSpeed(speed * Time.deltaTime);
         
         fences = new List<GameObject>[grounds.Length];
-        for(int i = 0; i < grounds.Length; i++)
+        speedCoins = new List<GameObject>[grounds.Length];
+        for (int i = 0; i < grounds.Length; i++)
         {
             fences[i] = new List<GameObject>();
+            speedCoins[i] = new List<GameObject>();
         }
         ReCreateFence(1, 10);
         ReCreateFence(2, 20);
@@ -63,6 +69,7 @@ public class MainCamera : MonoBehaviour
     private void Death()
     {
         print("СМЕЕЕРть");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void ReCreateFence(int index, float y)
@@ -73,6 +80,12 @@ public class MainCamera : MonoBehaviour
         }
         fences[index].Clear();
 
+        for (int i = 0; i < speedCoins[index].Count; i++)
+        {
+            Destroy(speedCoins[index][i]);
+        }
+        speedCoins[index].Clear();
+
         Random random = new Random();
 
         for(int i = random.Next(3,9); i >= 0; i--)
@@ -82,6 +95,15 @@ public class MainCamera : MonoBehaviour
                                              y + random.Next(-45, 45) / 10.0f,
                                              obj.transform.position.z);
             fences[index].Add(obj);
+        }
+
+        for (int i = random.Next(0, 2); i >= 0; i--)
+        {
+            GameObject obj = Instantiate(speedCoin);
+            obj.transform.position = new Vector3(random.Next(-65, 65) / 10.0f,
+                                             y + random.Next(-45, 45) / 10.0f,
+                                             obj.transform.position.z);
+            speedCoins[index].Add(obj);
         }
     } 
 }
